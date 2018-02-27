@@ -17,7 +17,7 @@ import {
   deleteTodoAsync,
 } from '../../actions/todo';
 
-class TodoComponent extends Component {
+export class TodoComponent extends Component {
   constructor(props) {
     super(props);
     this.handleTodoChange = this.handleTodoChange.bind(this);
@@ -122,7 +122,7 @@ TodoComponent.propTypes = {
   deleteTodoAsync: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => (
+export const mapStateToProps = state => (
   {
     todos: state.todo.todos,
   }
