@@ -3,20 +3,8 @@ const { Todo } = require('../../models');
 
 const router = express.Router();
 
-const isAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: 'unauthorized' });
-};
-
-router.get('/', isAuthenticated, (req, res) => {
-  const { id } = req.user.dataValues;
-
+router.get('/', (req, res) => {
   Todo.findAll({
-    where: {
-      UserId: id,
-    },
     raw: true,
   })
   .then((data) => {
@@ -34,12 +22,9 @@ router.route('/')
       isComplete,
     } = req.body;
 
-    const { id } = req.user;
-
     const todo = {
       title,
-      isComplete,
-      UserId: id,
+      isComplete
     };
 
     Todo.create(todo)
@@ -50,7 +35,7 @@ router.route('/')
       res.status(400).json({ error });
     });
   })
-  .put(isAuthenticated, (req, res) => {
+  .put((req, res) => {
     const {
       id,
       title,
@@ -82,7 +67,7 @@ router.route('/')
     });
   });
 
-router.delete('/delete/:id', isAuthenticated, (req, res) => {
+router.delete('/delete/:id', (req, res) => {
   const { id } = req.params;
   Todo.destroy({
     where: {

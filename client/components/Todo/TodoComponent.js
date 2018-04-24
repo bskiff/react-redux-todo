@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { checkSession } from '../../utils/authorized';
 import './TodoComponent.scss';
 
 import {
-  HeaderComponent,
   TodoItemComponent,
 } from '../../components';
 
@@ -25,20 +23,12 @@ export class TodoComponent extends Component {
     this.renderTodos = this.renderTodos.bind(this);
 
     this.state = {
-      title: '',
-      isLoggedIn: true,
+      title: ''
     };
   }
 
   componentDidMount() {
-    checkSession()
-    .then(() => {
-      this.props.fetchTodosAsync();
-    })
-    .catch(() => {
-      localStorage.clear();
-      this.setState({ isLoggedIn: false });
-    });
+    this.props.fetchTodosAsync();
   }
 
   handleTodoChange(event) {
@@ -91,16 +81,12 @@ export class TodoComponent extends Component {
   }
 
   render() {
-    const { title, isLoggedIn } = this.state;
+    const { title } = this.state;
     const { todos } = this.props;
 
     return (
       <div className="todoContainer">
-        <HeaderComponent />
-        { !isLoggedIn ?
-          <Redirect to="/login" />
-          : this.renderTodos(todos, title)
-        }
+        { this.renderTodos(todos, title) }
       </div>
     );
   }

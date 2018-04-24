@@ -9,12 +9,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
       allowNull: false,
     },
-  }, {
-    classMethods: {
-      associate(models) {
-        Todo.belongsTo(models.User);
-      },
-    },
   });
   return Todo;
 };
