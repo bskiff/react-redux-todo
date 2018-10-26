@@ -21,10 +21,16 @@ export class TodoComponent extends Component {
     this.handleTodoChange = this.handleTodoChange.bind(this);
     this.handleAddTodo = this.handleAddTodo.bind(this);
     this.renderTodos = this.renderTodos.bind(this);
+    this.handleToggleFiltering = this.handleToggleFiltering.bind(this);
 
     this.state = {
       title: ''
     };
+  }
+
+  handleToggleFiltering() {
+    const { isFiltering } = this.state;
+    this.setState({ isFiltering: !isFiltering });
   }
 
   componentDidMount() {
@@ -50,7 +56,9 @@ export class TodoComponent extends Component {
     }
   }
 
-  renderTodos(todos, title) {
+  renderTodos(todos, title, isFiltering) {
+    const filteredTodos = isFiltering ? todos.filter((todo) => !todo.isComplete) : todos; 
+
     return (
       <div>
         <h1 className="title">React Redux Todo</h1>
@@ -62,8 +70,15 @@ export class TodoComponent extends Component {
           value={title}
           placeholder="Create A Todo"
         />
+        <h2 classname="title">Filter Completed</h2>
+        <input
+          type="checkbox"
+          name="filter"
+          checked={isFiltering}
+          onChange={this.handleToggleFiltering}
+        />
         <ul className="todoList">
-          {todos.map(todo => (
+          {filteredTodos.map(todo => (
             <TodoItemComponent
               key={todo.id}
               id={todo.id}
@@ -81,12 +96,12 @@ export class TodoComponent extends Component {
   }
 
   render() {
-    const { title } = this.state;
+    const { title, isFiltering } = this.state;
     const { todos } = this.props;
 
     return (
       <div className="todoContainer">
-        { this.renderTodos(todos, title) }
+        { this.renderTodos(todos, title, isFiltering) }
       </div>
     );
   }
