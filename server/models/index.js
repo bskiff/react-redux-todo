@@ -4,14 +4,15 @@ var fs        = require('fs');
 var path      = require('path');
 var Sequelize = require('sequelize');
 var basename  = path.basename(module.filename);
-var env       = process.env.NODE_ENV || 'development';
-var config    = require(__dirname + '/../config/config.json')[env];
+var config    = require('../config/config.json');
 var db        = {};
 
-if (config.use_env_variable) {
-  var sequelize = new Sequelize(process.env[config.use_env_variable]);
+const envConfig = config[process.env.NODE_ENV] || config.development;
+
+if (envConfig.use_env_variable) {
+  var sequelize = new Sequelize(process.env[envConfig.use_env_variable]);
 } else {
-  var sequelize = new Sequelize(config.database, config.username, config.password, config);
+  var sequelize = new Sequelize(envConfig.database, envConfig.username, envConfig.password, envConfig);
 }
 
 fs
