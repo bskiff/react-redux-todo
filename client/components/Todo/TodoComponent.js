@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './TodoComponent.scss';
@@ -21,9 +20,11 @@ export class TodoComponent extends Component {
     this.handleTodoChange = this.handleTodoChange.bind(this);
     this.handleAddTodo = this.handleAddTodo.bind(this);
     this.renderTodos = this.renderTodos.bind(this);
+    this.handleToggleCompletedVisible = this.handleToggleCompletedVisible.bind(this);
 
     this.state = {
-      title: ''
+      title: '',
+      completedVisible: false
     };
   }
 
@@ -50,6 +51,14 @@ export class TodoComponent extends Component {
     }
   }
 
+  handleToggleCompletedVisible() {
+    this.setState({ completedVisible: !this.state.completedVisible });
+  }
+
+  shouldShowTodo(showCompleted, isCompleted) {
+    return showCompleted || !isCompleted;
+  }
+
   renderTodos(todos, title) {
     return (
       <div>
@@ -62,18 +71,32 @@ export class TodoComponent extends Component {
           value={title}
           placeholder="Create A Todo"
         />
+        <h3 className="visibleToggleTitle">Show completed todos:</h3>
+        <input
+          type="checkbox"
+          className="toggleCompleteVisible"
+          onChange={this.handleToggleCompletedVisible}
+          value={this.state.completedVisible}
+        />
         <ul className="todoList">
-          {todos.map(todo => (
-            <TodoItemComponent
-              key={todo.id}
-              id={todo.id}
-              title={todo.title}
-              isComplete={todo.isComplete}
-              created={todo.createdAt}
-              update={this.props.updateTodoAsync}
-              delete={this.props.deleteTodoAsync}
-            />
-          ))
+          {todos
+            .filter(todo => {
+              console.log('this.state.completedVisible', this.state.completedVisible);
+              console.log('todo.isComplete', todo.isComplete);
+              console.log('this.state.completedVisible || todo.isComplete', this.state.completedVisible || todo.isComplete);
+              return this.shouldShowTodo(this.state.completedVisible, todo.isComplete);
+            })
+            .map(todo => (
+              <TodoItemComponent
+                key={todo.id}
+                id={todo.id}
+                title={todo.title}
+                isComplete={todo.isComplete}
+                created={todo.createdAt}
+                update={this.props.updateTodoAsync}
+                delete={this.props.deleteTodoAsync}
+              />
+            ))
           }
         </ul>
       </div>
@@ -86,7 +109,7 @@ export class TodoComponent extends Component {
 
     return (
       <div className="todoContainer">
-        { this.renderTodos(todos, title) }
+        {this.renderTodos(todos, title)}
       </div>
     );
   }
@@ -94,10 +117,14 @@ export class TodoComponent extends Component {
 
 TodoComponent.defaultProps = {
   todos: [],
-  fetchTodosAsync: () => {},
-  addTodoAsync: () => {},
-  updateTodoAsync: () => {},
-  deleteTodoAsync: () => {},
+  fetchTodosAsync: () => {
+  },
+  addTodoAsync: () => {
+  },
+  updateTodoAsync: () => {
+  },
+  deleteTodoAsync: () => {
+  },
 };
 
 TodoComponent.propTypes = {
